@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Users {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    protected String firstName;
-    protected String secondName;
-    protected String userName;
-    protected String password;
+    private String firstName;
+    private String secondName;
+    private String userName;
+    private String password;
 
     public Users(String firstName, String secondName, String userName, String password){
         this.firstName = firstName;
