@@ -1,7 +1,9 @@
 package com.example.pronostic.services;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,16 +16,17 @@ import com.example.pronostic.repositories.UsersReposiory;
 @Transactional 
 public class UsersService {
     private final UsersReposiory usersRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsersService(UsersReposiory ur){
+    public UsersService(UsersReposiory ur, PasswordEncoder pe){
         usersRepository = ur;
+        passwordEncoder = pe;
     }
 
     public Users createUser(UserCreationDto ucd){
         String firstName = ucd.getFirstName();
         String secondName = ucd.getSecondName();
         String userName = ucd.getUserName();
-        String password = ucd.getPassword();
         Optional<Users> existingUser =  usersRepository.findByUserName(userName);
         if(existingUser.isPresent()){
             throw new RuntimeException("Ce nom d'utilisateur est déjà utilisé : " + ucd.getUserName());
@@ -36,9 +39,14 @@ public class UsersService {
         user.setFirstName(firstName);
         user.setSecondName(secondName);
         user.setUserName(userName);
-        user.setPassword(password);
+        String hashedPassword = passwordEncoder.encode(ucd.getPassword());
+        user.setPassword(hashedPassword);
 
         return usersRepository.save(user);
+    }
+
+    public List<Users> getAllUsers(){
+        return usersRepository.findAll();
     }
 
 }
